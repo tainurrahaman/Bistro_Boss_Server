@@ -21,12 +21,51 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const userCollection = client.db("BistroBossDB").collection("users");
     const menuCollection = client.db("BistroBossDB").collection("menu");
+    const reviewCollection = client.db("BistroBossDB").collection("review");
+    const cartCollection = client.db("BistroBossDB").collection("cart");
+
+    // Users Database
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // Menu Database
 
     // Read all Menu item from DB
 
     app.get("/allMenu", async (req, res) => {
       const result = await menuCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Review Database
+
+    // Read all Review  fom DB
+
+    app.get("/reviews", async (req, res) => {
+      const result = await reviewCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Cart Database
+
+    app.get("/carts", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await cartCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // Store cart item data in DB
+
+    app.post("/carts", async (req, res) => {
+      const cartItem = req.body;
+      const result = await cartCollection.insertOne(cartItem);
       res.send(result);
     });
 
